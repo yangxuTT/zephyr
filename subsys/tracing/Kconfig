@@ -328,6 +328,12 @@ config TRACING_PM
 	help
 	  Enable tracing Power Management.
 
+config TRACING_GPIO
+	bool "Tracing GPIO"
+	default y
+	help
+	  Enable tracing GPIO.
+
 endmenu  # Tracing Configuration
 
 endif
