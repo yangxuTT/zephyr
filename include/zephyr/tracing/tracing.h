@@ -2050,35 +2050,37 @@
  * @brief Trace GPIO being configured as output
  * @param port @ref device representing the GPIO port
  * @param pin @ref gpio_pin_t representing the pin
-*/
-#define sys_port_trace_gpio_pin_configured_output(port, pin)
+ * @param flags @ref gpio_flags_t representing the flags
+ */
+#define sys_port_trace_gpio_pin_configured_output(port, pin, flags)
 
 /**
  * @brief Trace GPIO being configured as input
  * @param port @ref device representing the GPIO port
  * @param pin @ref gpio_pin_t representing the pin
-*/
-#define sys_port_trace_gpio_pin_configured_input(port, pin)
+ * @param flags @ref gpio_flags_t representing the flags
+ */
+#define sys_port_trace_gpio_pin_configured_input(port, pin, flags)
 
 /**
  * @brief Trace attaching event handler to GPIO
  * @param port @ref device representing the GPIO port
  * @param callback @ref a valid Application's callback structure pointer
-*/
+ */
 #define sys_port_trace_gpio_pin_event_attached(port, callback)
 
 /**
  * @brief Trace removing event handler from GPIO
  * @param port @ref device representing the GPIO port
  * @param callback @ref a valid Application's callback structure pointer
-*/
+ */
 #define sys_port_trace_gpio_pin_event_removed(port, callback)
 
 /**
  * @brief Trace executing GPIO event handler
  * @param port @ref device representing the GPIO port
  * @param callback @ref a valid Application's callback structure pointer
-*/
+ */
 #define sys_port_trace_gpio_pin_event_executed(port, callback)
 
 /** @} */ /* end of subsys_tracing_apis_gpio */

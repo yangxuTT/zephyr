@@ -11,5 +11,4 @@ project(tracing_tests)
 
 target_sources_ifndef(CONFIG_TRACING_GPIO app PRIVATE src/main.c)
 target_sources_ifdef(CONFIG_TRACING_GPIO app PRIVATE src/gpio_main.c)
-target_sources_ifdef(CONFIG_TRACING_GPIO app PRIVATE src/tracing_gpio.c)
 target_sources_ifdef(CONFIG_TRACING_USER app PRIVATE src/tracing_user.c)

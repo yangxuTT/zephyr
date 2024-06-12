@@ -4,13 +4,20 @@
 #include <zephyr/drivers/gpio.h>
 
 
+/* size of stack area used by each thread */
+#define STACKSIZE (2048)
+
+/* scheduling priority used by each thread */
+#define PRIORITY 7
+
+
 void test_handler(const struct device *port, struct gpio_callback *cb, uint32_t pins)
 {
 	printk("Interrupt detected!\n");
 }
 
 
-int main(void) {
+int gpio_sample(void) {
 
     const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 
@@ -34,3 +41,17 @@ int main(void) {
     // Remove interrupt
 	gpio_remove_callback(dev, &gpio_cb);
 }
+
+
+void threadA(void *dummy1, void *dummy2, void *dummy3)
+{
+	ARG_UNUSED(dummy1);
+	ARG_UNUSED(dummy2);
+	ARG_UNUSED(dummy3);
+
+	gpio_sample();
+}
+
+
+K_THREAD_DEFINE(thread_a, STACKSIZE, threadA, NULL, NULL, NULL,
+		PRIORITY, 0, 0);

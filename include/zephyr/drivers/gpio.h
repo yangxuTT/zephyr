@@ -1012,17 +1012,15 @@ static inline int z_impl_gpio_pin_configure(const struct device *port,
 		data->invert &= ~(gpio_port_pins_t)BIT(pin);
 	}
 
-	if (IS_ENABLED(CONFIG_TRACING)) {
-		if ((flags & GPIO_OUTPUT) != 0) {
-			sys_trace_gpio_pin_configured_output(port, pin);
-			if ((flags & GPIO_OUTPUT_INIT_HIGH) != 0) {
-				sys_trace_gpio_pin_active(port, pin);
-			} else {
-				sys_trace_gpio_pin_inactive(port, pin);
-			}
+	if ((flags & GPIO_OUTPUT) != 0) {
+		sys_port_trace_gpio_pin_configured_output(port, pin, flags);
+		if ((flags & GPIO_OUTPUT_INIT_HIGH) != 0) {
+			sys_port_trace_gpio_pin_active(port, pin);
 		} else {
-			sys_trace_gpio_pin_configured_input(port, pin);
+			sys_port_trace_gpio_pin_inactive(port, pin);
 		}
+	} else {
+		sys_port_trace_gpio_pin_configured_input(port, pin, flags);
 	}
 
 	return api->pin_configure(port, pin, flags);
@@ -1314,14 +1312,12 @@ static inline int z_impl_gpio_port_set_masked_raw(const struct device *port,
 	const struct gpio_driver_api *api =
 		(const struct gpio_driver_api *)port->api;
 
-	if (IS_ENABLED(CONFIG_TRACING)) {
-		for (size_t i = 0; i < sizeof(mask) * 8; ++i) {
-			if (mask & BIT(i)) {
-				if ((value & BIT(i)) != 0) {
-					sys_trace_gpio_pin_active(port, (gpio_pin_t)i);
-				} else {
-					sys_trace_gpio_pin_inactive(port, (gpio_pin_t)i);
-				}
+	for (size_t i = 0; i < sizeof(mask) * 8; ++i) {
+		if (mask & BIT(i)) {
+			if ((value & BIT(i)) != 0) {
+				sys_port_trace_gpio_pin_active(port, (gpio_pin_t)i);
+			} else {
+				sys_port_trace_gpio_pin_inactive(port, (gpio_pin_t)i);
 			}
 		}
 	}
@@ -1650,12 +1646,10 @@ static inline int gpio_pin_set(const struct device *port, gpio_pin_t pin,
 	__ASSERT((cfg->port_pin_mask & (gpio_port_pins_t)BIT(pin)) != 0U,
 		 "Unsupported pin");
 
-	if (IS_ENABLED(CONFIG_TRACING)) {
-		if (value != 0) {
-			sys_trace_gpio_pin_active(port, pin);
-		} else {
-			sys_trace_gpio_pin_inactive(port, pin);
-		}
+	if (value != 0) {
+		sys_port_trace_gpio_pin_active(port, pin);
+	} else {
+		sys_port_trace_gpio_pin_inactive(port, pin);
 	}
 
 	if (data->invert & (gpio_port_pins_t)BIT(pin)) {
@@ -1730,18 +1724,7 @@ static inline void gpio_init_callback(struct gpio_callback *callback,
 	__ASSERT(callback, "Callback pointer should not be NULL");
 	__ASSERT(handler, "Callback handler pointer should not be NULL");
 
-	if (IS_ENABLED(CONFIG_TRACING)) {
-		void wrapped_handler(const struct device *port_wrap,
-				     struct gpio_callback *callback_wrap,
-				     gpio_port_pins_t pin_mask_wrap) {
-			sys_trace_gpio_pin_event_executed(port_wrap, callback_wrap);
-			handler(port_wrap, callback_wrap, pin_mask_wrap);
-		};
-
-		callback->handler = wrapped_handler;
-	} else {
-		callback->handler = handler;
-	}
+	callback->handler = handler;
 	callback->pin_mask = pin_mask;
 }
 
@@ -1769,9 +1752,7 @@ static inline int gpio_add_callback(const struct device *port,
 		return -ENOSYS;
 	}
 
-	if (IS_ENABLED(CONFIG_TRACING)) {
-		sys_trace_gpio_pin_event_attached(port, callback);
-	}
+	sys_port_trace_gpio_pin_event_attached(port, callback);
 
 	return api->manage_callback(port, callback, true);
 }
@@ -1821,9 +1802,7 @@ static inline int gpio_remove_callback(const struct device *port,
 		return -ENOSYS;
 	}
 
-	if (IS_ENABLED(CONFIG_TRACING)) {
-		sys_trace_gpio_pin_event_removed(port, callback);
-	}
+	sys_port_trace_gpio_pin_event_removed(port, callback);
 
 	return api->manage_callback(port, callback, false);
 }
