@@ -24,7 +24,7 @@ void sys_trace_gpio_pin_configured_input(const struct device* port, gpio_pin_t p
 
 void sys_trace_gpio_pin_event_attached(const struct device* port, struct gpio_callback* callback)
 {
-	printk("port: %s status: event attached", port->name);
+	printk("port: %s status: event attached\n", port->name);
 }
 
 void sys_trace_gpio_pin_event_removed(const struct device* port, struct gpio_callback* callback)
@@ -34,5 +34,5 @@ void sys_trace_gpio_pin_event_removed(const struct device* port, struct gpio_cal
 
 void sys_trace_gpio_pin_event_executed(const struct device* port, struct gpio_callback* callback)
 {
-	printk("port: %s status event executed\n", port->name);
+	printk("port: %s status: event executed\n", port->name);
 }
