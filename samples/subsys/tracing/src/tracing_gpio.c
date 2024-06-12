@@ -1,5 +1,5 @@
 #include "tracing_gpio.h"
-#include <zephyr/drivers/gpio.h
+#include <zephyr/drivers/gpio.h>
 #include <zephyr/tracing/tracing.h>
 
 void sys_trace_gpio_pin_active(const struct device* port, gpio_pin_t pin)

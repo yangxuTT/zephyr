@@ -9,6 +9,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/usb/usb_device.h>
+#include <zephyr/drivers/gpio.h>
 
 /*
  * The hello world demo has two threads that utilize semaphores and sleeping
@@ -27,6 +28,7 @@
 /* delay between greetings (in ms) */
 #define SLEEPTIME 500
 
+const struct device *dev;
 
 /*
  * @param my_name      thread identification string
@@ -37,6 +39,13 @@ void helloLoop(const char *my_name,
 	       struct k_sem *my_sem, struct k_sem *other_sem)
 {
 	const char *tname;
+
+	const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
+	printk("Hello\n");
+	gpio_pin_configure(dev, 0, GPIO_OUTPUT);
+	printk("a\n");
+	gpio_pin_toggle(dev, 0);
+	printk("b\n");
 
 	while (1) {
 		/* take my semaphore */
@@ -87,6 +96,10 @@ void threadA(void *dummy1, void *dummy2, void *dummy3)
 	ARG_UNUSED(dummy2);
 	ARG_UNUSED(dummy3);
 
+#if defined(CONFIG_TRACING_GPIO)
+	const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
+#endif
+
 #if defined(CONFIG_USB_DEVICE_STACK)
 	int ret;
 
@@ -98,11 +111,11 @@ void threadA(void *dummy1, void *dummy2, void *dummy3)
 #endif /* CONFIG_USB_DEVICE_STACK */
 
 	/* spawn threadB */
-	k_tid_t tid = k_thread_create(&threadB_data, threadB_stack_area,
-			STACKSIZE, threadB, NULL, NULL, NULL,
-			PRIORITY, 0, K_NO_WAIT);
+	// k_tid_t tid = k_thread_create(&threadB_data, threadB_stack_area,
+	// 		STACKSIZE, threadB, NULL, NULL, NULL,
+	// 		PRIORITY, 0, K_NO_WAIT);
 
-	k_thread_name_set(tid, "thread_b");
+	// k_thread_name_set(tid, "thread_b");
 
 	/* invoke routine to ping-pong hello messages with threadB */
 	helloLoop(__func__, &threadA_sem, &threadB_sem);
