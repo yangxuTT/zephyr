@@ -1734,7 +1734,7 @@ static inline void gpio_init_callback(struct gpio_callback *callback,
 		void wrapped_handler(const struct device *port_wrap,
 				     struct gpio_callback *callback_wrap,
 				     gpio_port_pins_t pin_mask_wrap) {
-			sys_port_trace_gpio_pin_event_executed(port_wrap, callback_wrap);
+			sys_trace_gpio_pin_event_executed(port_wrap, callback_wrap);
 			handler(port_wrap, callback_wrap, pin_mask_wrap);
 		};
 

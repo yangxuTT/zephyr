@@ -29,10 +29,10 @@ void sys_trace_gpio_pin_event_attached(const struct device* port, struct gpio_ca
 
 void sys_trace_gpio_pin_event_removed(const struct device* port, struct gpio_callback* callback)
 {
-	printk("Event removed!\n");
+	printk("port: %s status: event removed\n", port->name);
 }
 
 void sys_trace_gpio_pin_event_executed(const struct device* port, struct gpio_callback* callback)
 {
-	printk("Event executed!\n");
+	printk("port: %s status event executed\n", port->name);
 }
