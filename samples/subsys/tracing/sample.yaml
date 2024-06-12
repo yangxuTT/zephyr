@@ -78,3 +78,15 @@ tests:
     extra_args: CONF_FILE="prj_percepio.conf"
     modules:
       - percepio
+  sample.tracing.gpio:
+    extra_args: CONF_FILE="prj_gpio.conf"
+    platform_allow:
+      - qemu_x86
+      - qemu_x86_64
+      - qemu_riscv64
+      - native_sim
+    integration_platforms:
+      - qemu_x86
+      - qemu_x86_64
+      - native_sim
+      - qemu_riscv64
