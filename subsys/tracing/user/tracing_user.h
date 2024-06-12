@@ -43,8 +43,8 @@ void sys_trace_isr_enter(void);
 void sys_trace_isr_exit(void);
 void sys_trace_idle(void);
 typedef uint8_t gpio_pin_t;
-// void sys_trace_gpio_pin_active(const struct device *port, gpio_pin_t pin);
-// void sys_trace_gpio_pin_inactive(const struct device *port, gpio_pin_t pin);
+void sys_trace_gpio_pin_active(const struct device *port, gpio_pin_t pin);
+void sys_trace_gpio_pin_inactive(const struct device *port, gpio_pin_t pin);
 
 #define sys_port_trace_k_thread_foreach_enter()
 #define sys_port_trace_k_thread_foreach_exit()

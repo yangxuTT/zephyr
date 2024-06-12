@@ -1015,17 +1015,16 @@ static inline int z_impl_gpio_pin_configure(const struct device *port,
 	if (IS_ENABLED(CONFIG_TRACING)) {
 		if ((flags & GPIO_OUTPUT) != 0) {
 			if ((flags & GPIO_OUTPUT_INIT_HIGH) != 0) {
-				sys_port_trace_gpio_pin_active(port, pin);
+				sys_trace_gpio_pin_active(port, pin);
 			} else {
-				sys_port_trace_gpio_pin_inactive(port, pin);
+				sys_trace_gpio_pin_inactive(port, pin);
 			}
 		}
 
 		if ((flags & GPIO_OUTPUT) != 0) {
-			sys_port_trace_gpio_pin_configured_output(port, pin);
-		}
-		else {
-			sys_port_trace_gpio_pin_configured_input(port, pin);
+			sys_trace_gpio_pin_configured_output(port, pin);
+		} else {
+			sys_trace_gpio_pin_configured_input(port, pin);
 		}
 	}
 
@@ -1317,6 +1316,18 @@ static inline int z_impl_gpio_port_set_masked_raw(const struct device *port,
 {
 	const struct gpio_driver_api *api =
 		(const struct gpio_driver_api *)port->api;
+
+	if (IS_ENABLED(CONFIG_TRACING)) {
+		for (size_t i = 0; i < sizeof(mask) * 8; ++i) {
+			if (mask & BIT(i)) {
+				if ((value & BIT(i)) != 0) {
+					sys_trace_gpio_pin_active(port, (gpio_pin_t)i);
+				} else {
+					sys_trace_gpio_pin_inactive(port, (gpio_pin_t)i);
+				}
+			}
+		}
+	}
 
 	return api->port_set_masked_raw(port, mask, value);
 }
@@ -1642,6 +1653,14 @@ static inline int gpio_pin_set(const struct device *port, gpio_pin_t pin,
 	__ASSERT((cfg->port_pin_mask & (gpio_port_pins_t)BIT(pin)) != 0U,
 		 "Unsupported pin");
 
+	if (IS_ENABLED(CONFIG_TRACING)) {
+		if (value != 0) {
+			sys_trace_gpio_pin_active(port, pin);
+		} else {
+			sys_trace_gpio_pin_inactive(port, pin);
+		}
+	}
+
 	if (data->invert & (gpio_port_pins_t)BIT(pin)) {
 		value = (value != 0) ? 0 : 1;
 	}
@@ -1743,7 +1762,7 @@ static inline int gpio_add_callback(const struct device *port,
 	}
 
 	if (IS_ENABLED(CONFIG_TRACING)) {
-		sys_port_trace_gpio_pin_event_attached(port, callback);
+		sys_trace_gpio_pin_event_attached(port, callback);
 	}
 
 	return api->manage_callback(port, callback, true);
@@ -1795,7 +1814,7 @@ static inline int gpio_remove_callback(const struct device *port,
 	}
 
 	if (IS_ENABLED(CONFIG_TRACING)) {
-		sys_port_trace_gpio_pin_event_removed(port, callback);
+		sys_trace_gpio_pin_event_removed(port, callback);
 	}
 
 	return api->manage_callback(port, callback, false);
