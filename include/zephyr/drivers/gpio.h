@@ -1013,12 +1013,19 @@ static inline int z_impl_gpio_pin_configure(const struct device *port,
 	}
 
 	if (IS_ENABLED(CONFIG_TRACING)) {
-		if ((flags & (GPIO_OUTPUT)) != 0) {
+		if ((flags & GPIO_OUTPUT) != 0) {
 			if ((flags & GPIO_OUTPUT_INIT_HIGH) != 0) {
 				sys_port_trace_gpio_pin_active(port, pin);
-			} else{
+			} else {
 				sys_port_trace_gpio_pin_inactive(port, pin);
 			}
+		}
+
+		if ((flags & GPIO_OUTPUT) != 0) {
+			sys_port_trace_gpio_pin_configured_output(port, pin);
+		}
+		else {
+			sys_port_trace_gpio_pin_configured_input(port, pin);
 		}
 	}
 
@@ -1735,6 +1742,10 @@ static inline int gpio_add_callback(const struct device *port,
 		return -ENOSYS;
 	}
 
+	if (IS_ENABLED(CONFIG_TRACING)) {
+		sys_port_trace_gpio_pin_event_attached(port, callback);
+	}
+
 	return api->manage_callback(port, callback, true);
 }
 
@@ -1781,6 +1792,10 @@ static inline int gpio_remove_callback(const struct device *port,
 
 	if (api->manage_callback == NULL) {
 		return -ENOSYS;
+	}
+
+	if (IS_ENABLED(CONFIG_TRACING)) {
+		sys_port_trace_gpio_pin_event_removed(port, callback);
 	}
 
 	return api->manage_callback(port, callback, false);
