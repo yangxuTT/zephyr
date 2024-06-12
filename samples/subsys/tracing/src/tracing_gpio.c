@@ -4,27 +4,27 @@
 
 void sys_trace_gpio_pin_active(const struct device* port, gpio_pin_t pin)
 {
-	printk("Active!\n");
+	printk("port: %s, pin: %d status: active\n", port->name, pin);
 }
 
 void sys_trace_gpio_pin_inactive(const struct device* port, gpio_pin_t pin)
 {
-	printk("Inactive!\n");
+	printk("port: %s, pin: %d status: inactive\n", port->name, pin);
 }
 
 void sys_trace_gpio_pin_configured_output(const struct device* port, gpio_pin_t pin)
 {
-	printk("Set output!\n");
+	printk("port: %s, pin: %d status: configured output\n", port->name, pin);
 }
 
 void sys_trace_gpio_pin_configured_input(const struct device* port, gpio_pin_t pin)
 {
-	printk("Set input!\n");
+	printk("port: %s, pin: %d status: configured input\n", port->name, pin);
 }
 
 void sys_trace_gpio_pin_event_attached(const struct device* port, struct gpio_callback* callback)
 {
-	printk("Event attached!\n");
+	printk("port: %s status: event attached", port->name);
 }
 
 void sys_trace_gpio_pin_event_removed(const struct device* port, struct gpio_callback* callback)

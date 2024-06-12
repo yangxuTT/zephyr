@@ -1014,15 +1014,12 @@ static inline int z_impl_gpio_pin_configure(const struct device *port,
 
 	if (IS_ENABLED(CONFIG_TRACING)) {
 		if ((flags & GPIO_OUTPUT) != 0) {
+			sys_trace_gpio_pin_configured_output(port, pin);
 			if ((flags & GPIO_OUTPUT_INIT_HIGH) != 0) {
 				sys_trace_gpio_pin_active(port, pin);
 			} else {
 				sys_trace_gpio_pin_inactive(port, pin);
 			}
-		}
-
-		if ((flags & GPIO_OUTPUT) != 0) {
-			sys_trace_gpio_pin_configured_output(port, pin);
 		} else {
 			sys_trace_gpio_pin_configured_input(port, pin);
 		}
